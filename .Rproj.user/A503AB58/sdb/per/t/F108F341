@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "setwd(\"/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev\")\nm <- read.csv(\"agt_ds1.dat\", sep = \",\", header=FALSE)\nmydata <- drawdowns(m,fn=\"agarwal\",q=240*60,par=list(nval=40, df=10, defunc=\"spline\"))\nplot(mydata, derivative=TRUE)\nmymod <- guess.gafmodel(gafmodel(\"ths\"),mydata)\nplot(mydata,model=mymod)\nmymod <- gafmodel(\"blt\",aspar = )\nmymod2 <- fit.gafmodel(mymod,mydata)\nplot(mydata,model=mymod2, derivative=TRUE, d.asp=3)\nprint(gafmodel(mymod2, testdata = c(7.7e-4)))\n\nq<- cbind(c(30*60,80*60, 130*60),\n          c(500/24/60/60,700/24/60/60,600/24/60/60))\n\n\nsetwd(\"/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/rhytool\")\nm <- read.csv(\"testsalarreduit.dat\", sep = \",\", header=FALSE)\nm <- m[1:7468,]\nm[,2]<- 57-m[,2]\nplot(m, ylim=c(22,26), xlim=c(2.2e6,2.3e6))\nrequire(robfilter)\nnewm <- robust.filter(m[,2], width=35)\nplot(m[,1],newm$level)\nq <- read.csv(\"q_salar.csv\", sep = \",\", header=FALSE)\n\nmydata <- drawdowns(m[,1],newm$level,fn=\"sampling\",par=list(nval=100, df=20))\nmydata2 <- drawdowns(mydata@dd$t, mydata@dd$s, q=q , fn=\"birsoy\", par=list(df=15))\nplot(mydata2, legend=FALSE)\n\n\n\n\n\nlibrary(sp)\nlibrary(rgdal)\ngrd <- GridTopology(c(606040,2444680), c(80,80), c(100,92))\nspgrd <- SpatialGridDataFrame(grid=grd, data = data.frame( z = seq(1, grd@cells.dim[2]*grd@cells.dim[1])))\nproj4string(spgrd) <- \"+init=epsg:27572\"\nwriteOGR(spgrd, \"/Users/francoisbertone/Documents\", \"spgrid\", driver=\"ESRI Shapefile\")\nplys <- inlmisc::Grid2Polygons(spgrd, zcol=\"z\", at=1:max(spgrd$z), level = FALSE)\nproj4string(plys) <- \"+init=epsg:27572\"\nwriteOGR(plys, \"/Users/francoisbertone/Documents\", \"Grid\", driver=\"ESRI Shapefile\")\n\n",
+    "created" : 1513334522265.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3385682055",
+    "id" : "F108F341",
+    "lastKnownWriteTime" : 1513690616,
+    "last_content_update" : 1513690616168,
+    "path" : "~/Dropbox (Personnelle)/Projets/Developpment/rhytool/test.R",
+    "project_path" : "test.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

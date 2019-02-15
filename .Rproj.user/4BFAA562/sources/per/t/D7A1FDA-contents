@@ -1,0 +1,92 @@
+library(rhytool)
+
+def.par <- par(no.readonly = TRUE)
+par(def.par)
+
+curve.gfamodel()
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Egis-Kimbiji/New Kimbiji Dropbox/BoreholeTechnicalData/K09/Pumptest")
+m <- read.table("longK09.dat", sep = ",", header=FALSE, stringsAsFactors=FALSE)
+mydata <- drawdowns(m[,1], m[,2]-3, sample = TRUE, miscDdOptions=list(nval=80))
+plot(mydata, derivative=T, log="xy", xlab="Time (s)", ylab="Drawdown (m)")
+mymod3 <- guess.gfamodel(gfamodel("thn"), mydata)
+plot(mydata,model=mymod3, leg.pos="topleft", derivative=T, log="x")
+#mymod2 <- fit.gfamodel(mymod3,mydata)
+mymod3 <- gfamodel("thn", aspar=c(6,1.02e-5,1e3))
+mymod <- fit.gfamodel(mymod3,mydata)
+plot(mydata,model=mymod, leg.pos="topleft", derivative=T, log="x")
+gfamodel(mymod, testdata = c(450/3600))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Egis-Salomon/WELL 4 - MATANIKO")
+m <- read.table("long-1997.csv", sep = ",", header=TRUE, stringsAsFactors=FALSE)
+mydata <- drawdowns(m[,1], m[,2]-8, sample = FALSE, miscDdOptions=list(nval=80))
+#plot(mydata, derivative=T)
+mymod3 <- guess.gfamodel(gfamodel("blt"), mydata)
+mymod3 <- gfamodel("blt", aqpar=c(1e-4,1e-4, 1e-7), testdata = c(0.3, 10))
+mymod3 <- gfamodel("blt", aspar=c(9,1e2,1e-1,1))
+mymod <- fit.gfamodel(mymod3,mydata)
+mymod3 <- gfamodel("grc", aspar=c(4.9,3.45e2,1e4))
+mymod <- fit.gfamodel(mymod3,mydata)
+plot(mydata,model=mymod, leg.pos="topleft", derivative=T, log="x")
+gfamodel(mymod, testdata = c(1063/60000))
+
+
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Egis-Salomon")
+m <- read.table("K-1-long.csv", sep = ",", header=TRUE, stringsAsFactors=FALSE)
+Q <- 63.78/3600
+n<-m[-1*c(1:5),]
+
+mydata <- drawdowns(m-5.3, sample = FALSE, miscDdOptions=list(nval=80))
+plot(mydata, derivative=TRUE)
+mymod2 <- fit.gfamodel(guess.gfamodel(gfamodel("thc"), mydata),mydata)
+mymod3 <- gfamodel("thc", aspar=c(2.2,6,1e3))
+mymod <- fit.gfamodel(mymod3,mydata)
+plot(mydata,model=mymod, leg.pos="bottomright", derivative=F)
+gfamodel(mymod, testdata = c(900/6000,0.2))
+
+dd1 <- drawdowns(c(1,10,500, 6000, 7200), model=gfamodel(mymod, testdata = c(667/60,0.2)))
+
+HL <- (4.41E-1*Q*3600) + 6.45E-3*(Q*3600)^2
+dd1 <- drawdowns(c(1,10,100, 300, 900), model=gfamodel("ths", aqpar=c(1.9E-3, 1e-2), testdata = c(Q, 0.1)))
+#n <- cbind(m[,1], m[,2]-1.86)
+n <- cbind(m[,1], m[,2]-HL+dd1@dd$s[5])
+n <- cbind(m[,1], m[,2])
+n<-n[which(n[,2]>=0),]
+mymod2 <- fit.gfamodel(guess.gfamodel(gfamodel("thc"), mydata),mydata)
+mymod3 <- fit.gfamodel(mymod2,mydata)
+plot(mydata,model=mymod3, leg.pos="bottomleft")
+gfamodel(mymod3, testdata = c(Q,0.3))
+
+
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Egis-Salomon")
+m <- read.table("M-1-step2.csv", sep = ",", header=FALSE, stringsAsFactors=FALSE)
+n<-m[-1*c(1:12),]
+n<-m[,]
+step.Q <- c(0.01172883, 0.01245673, 0.01339090, 0.01397465, 0.01486872, 0.01597475)
+mydata <- drawdowns(n, fn="birsoy", q=cbind(seq(7200, 43200,7200),step.Q), sample = T, miscDdOptions=list(nval=80))
+
+n<-m[1:12,]
+mydata <- drawdowns(n, sample = F, miscDdOptions=list(nval=80))
+plot(mydata, derivative=TRUE)
+mymod2 <- fit.gfamodel(guess.gfamodel(gfamodel("thc"), mydata),mydata)
+mymod3 <- gfamodel("thc", aspar=c(5e1,0.95,1e0))
+#mymod2 <- fit.gfamodel(mymod3,mydata)
+plot(mydata,model=mymod3, leg.pos="bottomleft", derivative=T)
+gfamodel(mymod2, testdata = c(1,0.4))

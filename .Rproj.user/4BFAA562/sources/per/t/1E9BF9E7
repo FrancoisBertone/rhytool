@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1544507329274.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2416670583",
+    "id" : "1E9BF9E7",
+    "lastKnownWriteTime" : 1544507268,
+    "last_content_update" : 1544507268,
+    "path" : "~/Dropbox (Personnelle)/Projets/Developpment/rhytool/R/plot.R",
+    "project_path" : "R/plot.R",
+    "properties" : {
+        "cursorPosition" : "12,10",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,244 @@
+library(rhytool)
+
+rm(list=ls())
+
+def.par <- par(no.readonly = TRUE)
+par(def.par)
+
+
+x<-gfamodel("war")
+dimfn <- paste0(".",x@model,"_std")
+.war_std <- function(){
+  return(gfamodel("war", aqpar=c(4e-05,3e-06, 5e-05, 4e-02), testdata = c(3.58e-02, 20)))
+}
+model <- do.call(dimfn, list())
+dd.obj <- drawdowns(t = (10^seq(1,5,length=40)), model = model)
+plot(dd.obj@dd,log="xy",type="l",lwd=0.8, col="black",ann=FALSE, xaxt = "n", yaxt="n", ylim=c(min(dd.obj@ldiff$ds), max(dd.obj@dd$s)))
+lines(dd.obj@ldiff, lty=3,lwd=0.8, col="black")
+
+
+
+data("pumptest")
+q<- cbind(c(30*60,80*60, 130*60),
+          c(500/24/60/60,700/24/60/60,600/24/60/60))
+mymod <- gfamodel("ths", aqpar=c(1.16E-3, 9.79E-4), testdata=c(1,5))
+
+t <- c(100,unlist(tmr_ds1[1]),8000,9000)
+mydata <- drawdowns(t,model=mymod, q=q)
+plot(mydata, derivative=TRUE)
+
+plot(mydata@dd, log="xy", type="l")
+points(tmr_ds1)
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/rhytool")
+load("pump_tests.RData")
+m <- read.csv("testsalarreduit.dat", sep = ",", header=T)
+mydata <- drawdowns(pumptest$thc_ds2,sample=T, miscDdOptions=list(nval=50))
+plot(mydata, derivative=TRUE)
+
+thc_ds2 <- m[,1:2]
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev")
+htj_ds1 <- read.csv("htj_ds1.dat", sep = ",", header=FALSE)
+mydata <- drawdowns(htj_ds1, miscDdOptions=list(defunc="std", filter.width=8, filter.method="DR"))
+plot(mydata, legend=FALSE)
+mymod2 <- fit.gfamodel(guess.gfamodel(gfamodel("htj"),mydata),mydata)
+
+mydata <- drawdowns(htj_ds1, miscDdOptions = list(defunc="spline", filter.width=5, filter.method="LTS"))
+plot(mydata,model=mymod2, legend=FALSE)
+
+
+#### TEST GRF
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev")
+m <- read.csv("grf_ds1.dat", sep = " ", header=FALSE)
+mydata <- drawdowns(m, sample=TRUE, miscDdOptions=list(defunc="spline", nval=40))
+plot(mydata, legend=FALSE)
+mod <- gfamodel("grf", testdata = c(0.021, 26.2, 0.1)) #aspar=c(0.02,0.00006,1),
+mod <- guess.gfamodel(mod,mydata)
+mymod2 <- fit.gfamodel(mod,mydata)
+plot(mydata,model=mymod2)
+
+m <- read.csv("grf_ds2.dat", sep = " ", header=FALSE)
+mydata <- drawdowns(m, sample=TRUE, miscDdOptions=list(defunc="std", nval=50))
+plot(mydata, legend=FALSE)
+mod <- gfamodel("grf", aspar=c(0.00031,2.1e-8,1.3),testdata = c(0.021, 26.2, 0.1)) #aspar=c(0.00031,2.1e-6,1),
+#mod <- guess.gfamodel(mod,mydata)
+mymod2 <- fit.gfamodel(mod,mydata)
+plot(mydata,model=mymod2)
+
+m <- read.csv("grf_ds3.dat", sep = " ", header=FALSE)
+mydata <- drawdowns(m, sample=TRUE, miscDdOptions=list(defunc="spline", nval=50))
+plot(mydata, legend=FALSE)
+mod <- gfamodel("grf", testdata = c(9.444e-3, 40, 0.1))
+mod <- guess.gfamodel(mod,mydata)
+mymod2 <- fit.gfamodel(mod,mydata)
+plot(mydata,model=mymod2)
+
+.grf_dim(mod@aspar$val, mydata@dd$t)
+
+
+mod <- gfamodel("grf", aspar=c(1.7e-6,8.6e-8,0.62),testdata = c(0.021, 26.2, 0.1))
+#On doit avoit Tn 2.3E+3 Sn 4.4E-2
+
+
+
+tmr_ds1 <- read.csv("tmr_ds1.dat", sep = ",", header=FALSE)
+q<- cbind(c(30*60,80*60, 130*60),
+          c(500/24/60/60,700/24/60/60,600/24/60/60))
+mydata <- drawdowns(tmr_ds1,fn="birsoy",q=q, miscDdOptions=list(defunc="spline", filter.width=9, filter.method="RM"))
+plot(mydata, model=mymod2, legend=FALSE)
+mymod <- guess.gfamodel(gfamodel("ths"),mydata)
+plot(mydata,model=mymod)
+mymod2 <- fit.gfamodel(mymod,mydata)
+plot(mydata,model=mymod2)
+gfamodel(mymod2, testdata = c(1,5))
+
+tfin <- 5E6
+q<- cbind(c(100, 200, 500, 10000, 200000, tfin),
+          c(5.3e-3, 8.3e-3, 3.3e-3, 1.94e-2, 1.76e-3, 1.55e-2))
+t<-10^seq(1,log10(tfin), length.out = 80)
+mydd2 <- drawdowns(t, model = gfamodel("thc", aspar=c(160,20,200)), q=q, fn="variablerate")
+#mydd2@dd$s <- mydd2@dd$s * (1+(runif(length(mydd2@dd$s)))*0.05)
+mydata <- drawdowns(mydd2@dd$t, mydd2@dd$s,fn="birsoy",q=q)
+plot(mydata)
+mymod <- guess.gfamodel(gfamodel("thc"),mydata)
+mymod2 <- fit.gfamodel(mymod2,mydata)
+plot(mydata,model=mymod2)
+gfamodel(mymod2, testdata = c(1,5))
+
+
+
+
+
+tmc_ds1 <- read.csv("tmc_ds1.dat", sep = ",", header=FALSE)
+q<- cbind(c(1740,4780, 8000),
+          c(500,100,800)/24/60/60)
+mydata <- drawdowns(tmc_ds1,fn="birsoy",sample=TRUE,q=q,miscDdOptions=list(nval=60))
+plot(mydata, derivative=TRUE)
+### Tres étrange: ici on a un war au lieu d'un thc dans l'exemple tmc_dmo. Et ca uniquement en ajustant les dates de paliers.
+mymod <- guess.gfamodel(gfamodel("ths"),mydata)
+plot(mydata,model=mymod)
+mymod2 <- fit.gfamodel(mymod,mydata)
+plot(mydata,model=mymod2)
+gfamodel(mymod2, testdata = c(1,20))
+
+
+t<-sort(c(10^seq(0,5, length.out = 80),c(1740,4780, 8000)))
+q<- cbind(c(1740,4780, 1e5),
+          c(500,100,800)/24/60/60)
+
+t<-sort(c(10^seq(log10(min(tmc_ds1[,1])),log10(max(tmc_ds1[,1])), length.out = 100),c(1740,4780)))
+#mydd2 <- drawdowns(tmc_ds1[,1], model = gfamodel("thc", aqpar=c(1.9e-3, 2e-4,81), testdata = c(1,20)), q=q, fn="variablerate")
+mydd2 <- drawdowns(t, model = gfamodel("thc", aqpar=c(1.9e-3, 2e-4,81), testdata = c(1,20)), q=q, fn="variablerate")
+plot(mydd2, leg.pos="topleft")
+mydata <- drawdowns(mydd2@dd,fn="birsoy",q=q)
+plot(mydata)
+mymod <- fit.gfamodel(guess.gfamodel(gfamodel("thc"),mydata),mydata)
+plot(mydata,model=mymod)
+gfamodel(mymod, testdata = c(1,20))
+
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/rhytool/data")
+#pumptest <- list(ths_ds1 = ths_ds1, thc_ds2=thc_ds2, agt_ds1=agt_ds1, htj_ds1=htj_ds1)
+save(pumptest, file = "pumptest.rda")
+data("pumptest")
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev")
+m <- read.csv("war_ds1.dat", sep = ",", header=FALSE)
+pumptest$war_ds1 <- m
+mydata <- drawdowns(m, miscDdOptions = list(defunc="spline", filter.width=9))
+plot(mydata, derivative=TRUE)
+mymod <- guess.gfamodel(gfamodel("war"),mydata)
+plot(mydata,model=mymod)
+mymod2 <- fit.gfamodel(mymod,mydata)
+plot(mydata,model=mymod2, leg.pos ="bottomleft" )
+
+plot(mydata@ldiff$dt, mydata@ldiff$ds, log="x", type="l")
+rob <- as.vector(unlist(robreg.filter(mydata@ldiff$ds, width=10, method="RM")$level))
+points(mydata@ldiff$dt, rob)
+mydata2<-mydata
+mydata2@ldiff$ds<-rob
+plot(mydata2,model=mymod)
+mymod2 <- fit.gfamodel(mymod,mydata2)
+plot(mydata2,model=mymod2)
+
+
+pack <- "rhytool"
+path <- find.package(pack)
+system(paste(shQuote(file.path(R.home("bin"), "R")),"CMD", "Rd2pdf", shQuote(path)))
+system(paste(shQuote(file.path(R.home("bin"), "R")),"CMD", "Rd2pdf", "--help"))
+
+
+
+MyDd <- drawdowns(t = (10^seq(2,5,length=600)), model = gafmodel("ths", aqpar = c(3E-4, 8E-4),  testdata = c(3.1E-1, 50)))
+tmp <- jitter(MyDd@dd$s, 2, amount = 0.2)
+ecart <- abs(MyDd@dd$s - tmp)
+ii <- which(ecart < 0.2)
+MyDd@dd$t <- MyDd@dd$t[ii]
+MyDd@dd$s <- tmp[ii]
+MyDd@dd <- MyDd@dd[which(MyDd@dd$s > 0.01),]
+#plot(MyDd)
+mydata <- drawdowns(MyDd@dd$t, MyDd@dd$s,sample=TRUE, miscDdOptions=list(nval=40))
+plot(mydata, derivative=TRUE)
+
+mymod <- guess.gafmodel(gafmodel("ths"),mydata)
+plot(mydata,model=mymod)
+mymod <- gafmodel("ths")
+mymod2 <- fit.gafmodel(mymod,mydata)
+plot(mydata,model=mymod2, derivative=TRUE, d.asp=3)
+print(gafmodel(mymod2, testdata = c(7.7e-4)))
+
+
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev")
+m <- read.csv("tmr_ds1.dat", sep = ",", header=FALSE)
+q<- cbind(c(30*60,80*60, 130*60),
+          c(500/24/60/60,800/24/60/60,600/24/60/60))
+mydata <- drawdowns(m,fn="birsoy", q=q)
+plot(mydata, legend=FALSE, unit.slope=TRUE)
+mymod<-fit.gfamodel( guess.gfamodel(gfamodel("thn"), dd=mydata), dd=mydata)
+plot(mydata, model=mymod)
+gfamodel(mymod, testdata=c(1,20))
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev")
+m <- read.csv("pcw_ds1.dat", sep = ",", header=FALSE)
+mydata <- drawdowns(m,sample=TRUE,miscDdOptions=list(nval=80, defunc="std"))
+plot(mydata, legend=FALSE, unit.slope=TRUE)
+mymod<-fit.gfamodel( guess.gfamodel(gfamodel("ths"), dd=mydata), dd=mydata)
+plot(mydata, model=mymod, unit.slope=TRUE)
+
+#testsalarreduit
+m <- m[1:7468,]
+m[,2]<- 57-m[,2]
+plot(m, ylim=c(22,26), xlim=c(2.2e6,2.3e6))
+require(robfilter)
+newm <- robust.filter(m[,2], width=35)
+plot(m[,1],newm$level)
+q <- read.csv("q_salar.csv", sep = ",", header=FALSE)
+
+mydata <- drawdowns(m[,1],newm$level,fn="sampling",par=list(nval=100, df=20))
+mydata2 <- drawdowns(mydata@dd$t, mydata@dd$s, q=q , fn="birsoy", par=list(df=15))
+
+
+setwd("/Users/francoisbertone/Dropbox (Personnelle)/Projets/Egis-Sintukola")
+m <- read.csv("F1.csv", sep = ",", header=FALSE)
+mydata <- drawdowns(m,sample=TRUE,miscDdOptions=list(nval=80))
+plot(mydata, legend=FALSE)
+mymod<-fit.gfamodel( guess.gfamodel(gfamodel("ths"), dd=mydata), dd=mydata)
+plot(mydata, model=mymod)
+
+
+
+
+
+
+library(sp)
+library(rgdal)
+grd <- GridTopology(c(606040,2444680), c(80,80), c(100,92))
+spgrd <- SpatialGridDataFrame(grid=grd, data = data.frame( z = seq(1, grd@cells.dim[2]*grd@cells.dim[1])))
+proj4string(spgrd) <- "+init=epsg:27572"
+writeOGR(spgrd, "/Users/francoisbertone/Documents", "spgrid", driver="ESRI Shapefile")
+plys <- inlmisc::Grid2Polygons(spgrd, zcol="z", at=1:max(spgrd$z), level = FALSE)
+proj4string(plys) <- "+init=epsg:27572"
+writeOGR(plys, "/Users/francoisbertone/Documents", "Grid", driver="ESRI Shapefile")
+

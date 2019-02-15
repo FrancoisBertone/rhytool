@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : ".thc_details <- function(useless=NULL) {\n  a <- \"Theis (1935) Model with a constant head boundary.\"\n  b <- c(\"slope a\",\"intercept t0\",\"intercept ti\")\n  c <- c(\"Transmissivity T (L^2/T)\",\"Storativity S (-)\",\"Distance to image well ri (L)\")\n  d <- c(\"Pumping rate Q (L^3/T)\", \"Distance r between the observation and the pumping well (L)\")\n  return(list(a,b,c,d))\n}\n\n.thc_computeparams <- function(adp,data) {\n  if(length(adp)<3) {\n    stop(\"Incorrect length for the adp vector. Length of 3 expected.\")\n  }\n  if(length(adp)>3) {\n    warning(\"Incorrect length for the adp vector. Length of 3 expected. Extra parameters ignored.\")\n  }\n  if(length(data)<2) {\n    stop(\"Incorrect length for the data vector. Length of 2 expected.\")\n  }\n  if(length(data)>2) {\n    warning(\"Incorrect length for the data vector. Length of 2 expected. Extra parameters ignored.\")\n  }\n  Tr <- 0.1832339*data[1]/adp[1]\n  S <- 2.2458394*Tr*adp[2]/data[2]^2\n  ri <- sqrt(2.2458394*Tr*adp[3]/S)\n  return(c(Tr,S,ri))\n}\n\n.thc_computeadjustparams <- function(p,data) {\n  if(length(p)<3) {\n    stop(\"Incorrect length for the p vector. Length of 3 expected.\")\n  }\n  if(length(p)>3) {\n    warning(\"Incorrect length for the p vector. Length of 3 expected. Extra parameters ignored.\")\n  }\n  if(length(data)<2) {\n    stop(\"Incorrect length for the data vector. Length of 2 expected.\")\n  }\n  if(length(data)>2) {\n    warning(\"Incorrect length for the data vector. Length of 2 expected. Extra parameters ignored.\")\n  }\n  a <- 0.1832339*data[1]/p[1]\n  t0 <- p[2]*data[2]^2/(2.2458394*p[1])\n  ti <- (p[2]*p[3]^2)/(2.2458394*p[1])\n  return(c(a,t0,ti))\n}\n\n.thc_gss <- function(t, s) {\n  res <- .ldiff_spline(t,s,df=20)\n  td <- res[which(res[,2]>0),1]\n  d <- res[which(res[,2]>0),2]\n  sl <- max(s)\n  du <- max(d)\n  i <- which.max(d)\n  tu <- td[i]\n  i <- which(t>=tu)\n  ta <- t[i[1]]\n  sa <- s[i[1]]\n  end <- length(td)\n  ts <- td[end]\n  ds <- d[end]\n  # Dimensionless distance\n  rd <- .thc_ird(sl/du)\n  # Slope of Jacob's straight line\n  a <- sl/2/log10(rd)\n  # Origin of jacob straight line\n  if (rd<50) {\n    t0 <- 2*tu*log(rd)/(0.5625*(rd^2-1))\n  }\n  else {\n    t0 <- ta*10^(-sa/a)\n  }\n  # Origin of the second line\n  t1 <- rd^2*t0\n  # Time of intersection of the two lines\n  ti <- t1^2/t0\n  return(c(a,t0,ti))\n}\n\n#' @importFrom stats approx\nNULL\n\n.thc_ird <- function( frd ) {\n#  require(stats)\n  if (frd < 2.71828182850322) {\n    warning(\"Problem in the inversion of Rd: thc_ird\",\"\")\n    rd <- 1.000001\n  }\n  else {\n    rd <- exp(frd/2)\n    if (rd>50) {\n      y <- seq(1,60,by=0.05)\n      y[(1)] <- 1.000001\n      x <- .thc_frd(y)\n      rd <- stats::approx(x,y,xout=frd,rule = 2)$y\n    }\n  }\n  return(rd)\n}\n\n.thc_frd <- function( rd ) {\n  if(rd[1]==1) {\n    rd <- 1.00001\n  }\n  rd2 <- rd^2\n  rd21 <- rd2-1\n  frd <- log(rd2)/(rd21*rd^(-2*rd2/rd21))\n  return(frd)\n}\n\n.thc_dim <- function( p, t) {\n  s <- .ths_dim(c(p[1],p[2]),t) - .ths_dim(c(p[1],p[3]),t)\n}\n\n",
+    "created" : 1516372726831.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3248692784",
+    "id" : "C58A4500",
+    "lastKnownWriteTime" : 1516372737,
+    "last_content_update" : 1516372737641,
+    "path" : "~/Dropbox (Personnelle)/Projets/Developpment/rhytool/R/thc.R",
+    "project_path" : "R/thc.R",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

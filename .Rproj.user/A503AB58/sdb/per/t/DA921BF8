@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "setwd(\"/Users/francoisbertone/Dropbox (Personnelle)/Projets/Developpment/Rhytooldev\")\nm <- read.csv(\"htj_ds1.dat\", sep = \",\", header=FALSE)\n\nmydata <- drawdowns(m)\nplot(mydata, derivative=TRUE)\n\nmymod <- guess.gafmodel(gafmodel(\"thc\"),mydata)\n\nplot(mydata,model=mymod)\nmymod2 <- fit.gafmodel(mymod,mydata)\nplot(mydata,model=mymod2, derivative=TRUE)\n\n\nprint(gafmodel(mymod2, testdata = c(13.1/3600,0.02)))\nmymod3=gafmodel(mymod2, testdata = c(13.1/3600,0.02, 50))\n\nmymod4@aqpar$val\nmymod4=gafmodel(\"htj\", aqpar=c(8e-4,0.15,2e-9), testdata = c(45/3600,0.02,50))\n\n\ndrawdowns(t=c(1e4,1e5,1e6, 1e7, 2.3e7,1e8),model=mymod4)\n",
+    "created" : 1515511039860.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1247187047",
+    "id" : "DA921BF8",
+    "lastKnownWriteTime" : 1516372742,
+    "last_content_update" : 1516372742,
+    "path" : "~/Dropbox (Personnelle)/Projets/Egis-Sintukola/scriptF1.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
