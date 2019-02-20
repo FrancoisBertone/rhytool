@@ -1,14 +1,14 @@
 #' Plot typical response curves
 #'
 #' Plot one or several typical response to pumping curve(s) for known groundwater flow analytical models.
-#' @param mod character or list of characters. A keyword or list of keywords from the list of known analytical model: "ths","thc", "thn", "blt", "war","htj". Can also be a gfamodel class object.
+#' @param mod character or list of characters. A keyword or list of keywords from the list of known analytical model: "ths", "thc", "thn", "pcw", "blt", "war", "htj", "grg", "grf". Can also be a gfamodel class object.
 #' @param cex.legend numeric. factor for sizing the legend.
 #' @param log character string which contains "x" if the x axis is to be logarithmic, "y" if the y axis is to be logarithmic and "xy" or "yx" if both axes are to be logarithmic.
 #' @details  If \verb{mod} is a gfamodel class object, only the model type of the \verb{mod} object is used for plot. If available in the \verb{mod} object, analytical solution parameters are ignored.
 #' @seealso \code{\link{gfamodel}}
 #' @importFrom graphics text close.screen par screen split.screen strwidth
 #' @export
-curve.gfamodel <- function( mod = list("ths","thc", "thn", "blt", "war","htj", "grg", "grf"), cex.legend=0.8, log="xy") {
+curve.gfamodel <- function( mod = list("ths", "thc", "thn", "blt", "war", "htj", "pcw", "grg", "grf"), cex.legend=0.8, log="xy") {
   def.par <- graphics::par(no.readonly = TRUE)
   if(class(mod)=="gfamodel"){
     mod <- mod@model

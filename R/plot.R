@@ -13,7 +13,7 @@
 #' @export
 setMethod(f="plot",
           signature="drawdowns",
-          definition=function(x, model=NULL, log="xy", col=c("darkslategray4","indianred3","darkslategray3","indianred1"), derivative=TRUE, legend=TRUE, leg.pos="bottomright", unit.slope=FALSE, ylab="Drawdown",xlab="Time") {
+          definition=function(x, model=NULL, log="xy", col=c("blue4","aquamarine4","deepskyblue3","darkolivegreen3"), derivative=TRUE, legend=TRUE, leg.pos="bottomright", unit.slope=FALSE, ylab="Drawdown",xlab="Time") {
             longcol <- rep(col,4)
             td <- x@ldiff$dt[which(x@ldiff$ds>0)]
             sd <- x@ldiff$ds[which(x@ldiff$ds>0)]
@@ -34,6 +34,7 @@ setMethod(f="plot",
             grid(col = MyCol, lty = "dotted", lwd = 0.8)
             lty=c(0)
             pch=c(1)
+            lwd=c(1)
             col=longcol[1]
             legcar=c("Drawdown (measure)")
             if(!is.null(model)){
@@ -47,23 +48,26 @@ setMethod(f="plot",
               }
               tdc <- tdc[which(dsc>0)]
               dsc <- dsc[which(dsc>0)]
-              lines(calc@dd$t,calc@dd$s,type="l", col=longcol[3],lwd=3.8)
+              lines(calc@dd$t,calc@dd$s,type="l", col=longcol[3],lwd=3.0)
               legcar=c(legcar, "Drawdown (model)")
               lty=c(lty, 1)
               pch=c(pch, NA)
+              lwd=c(lwd, 2)
               col=c(col,longcol[3])
             }
             if(derivative) {
               legcar=c(legcar, "Derivative from measured drawdown")
               lty=c(lty, 0)
-              pch=c(pch, 16)
+              pch=c(pch, 3)
+              lwd=c(lwd, 1)
               col=c(col,longcol[2])
-              points(td,sd, type="p",pch=20, cex=0.9, col=longcol[2])
+              points(td,sd, type="p",pch=3, cex=0.9, col=longcol[2])
               if(!is.null(model)){
-                points(tdc,dsc, type="l",lwd=3.8, col=longcol[4])
+                points(tdc,dsc, type="l",lwd=3.0, col=longcol[4])
                 legcar=c(legcar, "Derivative from model drawdown")
                 lty=c(lty, 1)
                 pch=c(pch, NA)
+                lwd=c(lwd, 2)
                 col=c(col,longcol[4])
               }
             }
@@ -71,7 +75,7 @@ setMethod(f="plot",
               .plot.unit.slope(x@dd$t,x@dd$s)
             }
             if(legend){
-              legend(leg.pos,lty=lty, pch=pch,cex=0.8,legend=legcar, inset=0.02, col=col, bg="white")
+              legend(leg.pos,lty=lty, pch=pch,lwd=lwd, cex=0.8,legend=legcar, inset=0.02, col=col, bg="white")
             }
             })
 

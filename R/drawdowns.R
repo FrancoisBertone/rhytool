@@ -38,13 +38,13 @@ setClass("drawdowns",
 #'     \item "spline", this function approximates logarithmic derivative with spline, usign the smooth.spline function of the stats package. Use df keyword to set the degree of freedom (see \code{\link{smooth.spline}}). Default value for df is 2/3 of the number of data points.
 #'     \item "std", this function approximates logarithmic derivative with centered differences.
 #'     \item "bourdet", this function approximates logarithmic derivative with Bourdet's formula. Use df keyword to set the distance parameter of the Bourdet function. Default value is 2.
-#'     \item "horne", this function approximates logarithmic derivative with the Horne's formula. pproximate logarithmic derivative with Bourdet's formula
+#'     \item "horne", this function approximates logarithmic derivative with the Horne's formula.
 #'     }
 #' @return An object of class drawdowns containing time or reduced time and drawdowns or reduced drawdowns ready for adjustement with a gfamodel
 #' @seealso \code{\link{smooth.spline}},  \code{\link{gfamodel}}, \code{\link{robreg.filter}}
 #' @references Renard, Philippe (2017). Hytool: an open source matlab toolbox for the interpretation of hydraulic tests using analytical solutions. Journal of Open Source Software, 2(19), 441, \doi{10.21105/joss.00441}.
 #' @references Agarwal, R.G., 1980. A new method to account for producing time effects when drawdown type curves are used to analyse pressure buildup and other test data. Proceedings of the 55th Annual Fall Technical Conference and Exhibition of the Society of Petroleum Engineers. Paper SPE 9289, \doi{10.2118/9289-MS}
-#' @references Birsoy YK, Summers WK (1980) Determination of aquifer parameters from step tests and intermittent pumping data. Ground Water 18(2):137–146, \doi{10.1111/j.1745-6584.1980.tb03382.x}.
+#' @references Birsoy YK, Summers WK (1980) Determination of aquifer parameters from step tests and intermittent pumping data. Ground Water 18(2):137???146, \doi{10.1111/j.1745-6584.1980.tb03382.x}.
 #' @examples
 #' # Generate drawdowns object for a standard series of t and s
 #' MyDd <- drawdowns(t = pumptest$ths_ds1[,1], s = pumptest$ths_ds1[,2])
@@ -110,7 +110,7 @@ drawdowns <- function(t, s=NULL, q=NULL, fn=NULL, model=NULL, sample=FALSE, misc
   if(is.null(miscDdOptions$defunc)){
     miscDdOptions$defunc <- "spline"
   }
-  else if(!is.element(miscDdOptions$defunc, c("spline","bourdet","std","fb"))) {  ## , "horne" à corriger
+  else if(!is.element(miscDdOptions$defunc, c("spline","bourdet","std","fb"))) {  ## , "horne" ?? corriger
       warning("Unknown derivative function defunc. Default value used.")
     miscDdOptions$defunc <- "spline"
     }
@@ -146,7 +146,7 @@ drawdowns <- function(t, s=NULL, q=NULL, fn=NULL, model=NULL, sample=FALSE, misc
     }
     res = .hysampling(res[,1], res[,2], ns)
   }
-  ldres <- do.call(defunc,list(x=res[,1], y=res[,2], df=miscDdOptions$df, filter.width=miscDdOptions$filter.width, filter.method=miscDdOptions$filter.method))
+  ldres <- do.call(defunc,list(x=res[,1], y=res[,2], df=miscDdOptions$df, nknots = miscDdOptions$nknots, filter.width=miscDdOptions$filter.width, filter.method=miscDdOptions$filter.method))
   return(new("drawdowns", dd=data.frame(t = res[,1], s = res[,2]), ldiff=data.frame(dt = ldres[,1], ds = ldres[,2])))
 }
 
@@ -220,13 +220,13 @@ drawdowns <- function(t, s=NULL, q=NULL, fn=NULL, model=NULL, sample=FALSE, misc
 }
 
 #' @importFrom stats smooth.spline
-.ldiff_spline <- function(x, y, df=NULL, ...) {
+.ldiff_spline <- function(x, y, df=NULL, nknots = 5, ...) {
   # Approximate logarithmic derivative with Spline
   end <- length(x)
   if(is.null(df)){
     df = round(end*2/3)
   }
-  smp <- smooth.spline(x, y, df= df, keep.data = TRUE)
+  smp <- smooth.spline(x, y, df= df, keep.data = TRUE, all.knots=FALSE, nknots = nknots)
   xi<-smp$x
   yi<-smp$y
   end <- length(xi)

@@ -4,11 +4,11 @@
 \alias{curve.gfamodel}
 \title{Plot typical response curves}
 \usage{
-curve.gfamodel(mod = list("ths", "thc", "thn", "blt", "war", "htj", "grg",
-  "grf"), cex.legend = 0.8, log = "xy")
+curve.gfamodel(mod = list("ths", "thc", "thn", "blt", "war", "htj", "pcw",
+  "grg", "grf"), cex.legend = 0.8, log = "xy")
 }
 \arguments{
-\item{mod}{character or list of characters. A keyword or list of keywords from the list of known analytical model: "ths","thc", "thn", "blt", "war","htj". Can also be a gfamodel class object.}
+\item{mod}{character or list of characters. A keyword or list of keywords from the list of known analytical model: "ths", "thc", "thn", "pcw", "blt", "war", "htj", "grg", "grf". Can also be a gfamodel class object.}
 
 \item{cex.legend}{numeric. factor for sizing the legend.}
 

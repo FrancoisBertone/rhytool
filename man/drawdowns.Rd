@@ -50,7 +50,7 @@ The function to be used for the computation of the derivative points can be set 
     \item "spline", this function approximates logarithmic derivative with spline, usign the smooth.spline function of the stats package. Use df keyword to set the degree of freedom (see \code{\link{smooth.spline}}). Default value for df is 2/3 of the number of data points.
     \item "std", this function approximates logarithmic derivative with centered differences.
     \item "bourdet", this function approximates logarithmic derivative with Bourdet's formula. Use df keyword to set the distance parameter of the Bourdet function. Default value is 2.
-    \item "horne", this function approximates logarithmic derivative with the Horne's formula. pproximate logarithmic derivative with Bourdet's formula
+    \item "horne", this function approximates logarithmic derivative with the Horne's formula.
     }
 }
 \examples{
@@ -82,7 +82,7 @@ Renard, Philippe (2017). Hytool: an open source matlab toolbox for the interpret
 
 Agarwal, R.G., 1980. A new method to account for producing time effects when drawdown type curves are used to analyse pressure buildup and other test data. Proceedings of the 55th Annual Fall Technical Conference and Exhibition of the Society of Petroleum Engineers. Paper SPE 9289, \doi{10.2118/9289-MS}
 
-Birsoy YK, Summers WK (1980) Determination of aquifer parameters from step tests and intermittent pumping data. Ground Water 18(2):137–146, \doi{10.1111/j.1745-6584.1980.tb03382.x}.
+Birsoy YK, Summers WK (1980) Determination of aquifer parameters from step tests and intermittent pumping data. Ground Water 18(2):137???146, \doi{10.1111/j.1745-6584.1980.tb03382.x}.
 }
 \seealso{
 \code{\link{smooth.spline}},  \code{\link{gfamodel}}, \code{\link{robreg.filter}}

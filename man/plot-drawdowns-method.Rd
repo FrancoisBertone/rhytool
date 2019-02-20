@@ -5,10 +5,10 @@
 \alias{plot,drawdowns-method}
 \title{Class "drawdowns"}
 \usage{
-\S4method{plot}{drawdowns}(x, model = NULL, log = "xy",
-  col = c("darkslategray4", "indianred3", "darkslategray3", "indianred1"),
-  derivative = TRUE, legend = TRUE, leg.pos = "bottomright",
-  unit.slope = FALSE, ylab = "Drawdown", xlab = "Time")
+\S4method{plot}{drawdowns}(x, model = NULL, log = "xy", col = c("blue4",
+  "aquamarine4", "deepskyblue3", "darkolivegreen3"), derivative = TRUE,
+  legend = TRUE, leg.pos = "bottomright", unit.slope = FALSE,
+  ylab = "Drawdown", xlab = "Time")
 }
 \arguments{
 \item{x}{drawdowns object to be plotted}

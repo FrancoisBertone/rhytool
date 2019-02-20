@@ -1,7 +1,7 @@
 Package: rhytool
 Type: Package
 Title: Hytool library for R users
-Version: 0.0.9000
+Version: 0.0.9001
 Author: Philippe Renard, François Bertone
 Maintainer: François Bertone <f.bertone@bertone.associates>
 Description: Hytool library for R users. Hytool is originally a matlab toolbox for the interpretation of hydraulic tests in wells. The toolbox contains analytical solutions used to describe groundwater flow around wells, and functions for importing, displaying, and fitting a model to the data. Rhytool is the R version of this toolbox (S4). To cite this toolbox, please use the following reference: Renard Philippe (2017), Hytool: an open source matlab toolbox for the interpretation of hydraulic tests using analytical solutions, _Journal of Open Source Software_, 2(19), 441.
