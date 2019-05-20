@@ -1,4 +1,4 @@
-# rhytool
+# Rhytool
 
 
 This is the R version of the hytool toolbox to interpret pumping test data.  
